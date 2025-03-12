@@ -121,30 +121,4 @@ elif pages == "Análise de Dados":
     if uploaded_file is not None:
         df = pd.read_excel(uploaded_file)
         st.write("Amostra dos dados:", df.head())
-        
-        # Distribuição Poisson - Modelando gols por jogador
-        if "Número de Gols" in df.columns:
-            media_gols = df["Número de Gols"].mean()
-            x_poisson = np.arange(0, df["Número de Gols"].max() + 1)
-            y_poisson = stats.poisson.pmf(x_poisson, media_gols)
-            
-            fig_poisson = go.Figure()
-            fig_poisson.add_trace(go.Bar(x=x_poisson, y=y_poisson, name="Distribuição de Poisson"))
-            fig_poisson.update_layout(title="Distribuição Poisson - Número de Gols",
-                                      xaxis_title="Gols",
-                                      yaxis_title="Probabilidade")
-            st.plotly_chart(fig_poisson)
-            
-        # Distribuição Normal - Modelando minutos jogados
-        if "Minutos Jogados" in df.columns:
-            media_minutos = df["Minutos Jogados"].mean()
-            desvio_minutos = df["Minutos Jogados"].std()
-            x_normal = np.linspace(media_minutos - 4*desvio_minutos, media_minutos + 4*desvio_minutos, 100)
-            y_normal = stats.norm.pdf(x_normal, media_minutos, desvio_minutos)
-            
-            fig_normal = go.Figure()
-            fig_normal.add_trace(go.Scatter(x=x_normal, y=y_normal, mode='lines', name="Distribuição Normal"))
-            fig_normal.update_layout(title="Distribuição Normal - Minutos Jogados",
-                                     xaxis_title="Minutos Jogados",
-                                     yaxis_title="Densidade de Probabilidade")
-            st.plotly_chart(fig_normal)
+
