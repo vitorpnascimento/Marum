@@ -122,3 +122,59 @@ elif pages == "Análise de Dados":
         df = pd.read_excel(uploaded_file)
         st.write("Amostra dos dados:", df.head())
 
+                # Estatísticas descritivas
+        st.subheader("📊 Estatísticas Descritivas")
+        coluna = st.selectbox("Selecione uma coluna numérica para análise:", df.select_dtypes(include=np.number).columns)
+        
+        if coluna:
+            media = df[coluna].mean()
+            mediana = df[coluna].median()
+            moda = df[coluna].mode().iloc[0]
+            desvio = df[coluna].std()
+            variancia = df[coluna].var()
+
+            st.write(f"Média: {media:.2f}")
+            st.write(f"Mediana: {mediana}")
+            st.write(f"Moda: {moda}")
+            st.write(f"Desvio padrão: {desvio:.2f}")
+            st.write(f"Variância: {variancia:.2f}")
+
+        # Gráfico de dispersão
+        st.subheader("📈 Correlação entre Assistências e Gols")
+        if "Número de Gols" in df.columns and "Número de Assistências" in df.columns:
+            fig = px.scatter(df, x="Número de Assistências", y="Número de Gols",
+                             title="Assistências vs Gols",
+                             labels={"Número de Assistências": "Assistências", "Número de Gols": "Gols"},
+                             trendline="ols")
+            st.plotly_chart(fig)
+
+        # Distribuição de Poisson - Gols
+        st.subheader("🔢 Distribuição de Poisson - Gols")
+        if "Número de Gols" in df.columns:
+            media_gols = df["Número de Gols"].mean()
+            x = np.arange(0, df["Número de Gols"].max() + 1)
+            y = stats.poisson.pmf(x, media_gols)
+
+            fig_poisson = go.Figure()
+            fig_poisson.add_trace(go.Bar(x=x, y=y))
+            fig_poisson.update_layout(title="Distribuição de Poisson - Número de Gols",
+                                      xaxis_title="Gols",
+                                      yaxis_title="Probabilidade")
+            st.plotly_chart(fig_poisson)
+
+        # Distribuição Normal - Minutos Jogados
+        st.subheader("📊 Distribuição Normal - Minutos Jogados")
+        if "Minutos Jogados" in df.columns:
+            mu = df["Minutos Jogados"].mean()
+            sigma = df["Minutos Jogados"].std()
+            x = np.linspace(mu - 4*sigma, mu + 4*sigma, 100)
+            y = stats.norm.pdf(x, mu, sigma)
+
+            fig_normal = go.Figure()
+            fig_normal.add_trace(go.Scatter(x=x, y=y, mode='lines'))
+            fig_normal.update_layout(title="Distribuição Normal - Minutos Jogados",
+                                     xaxis_title="Minutos",
+                                     yaxis_title="Densidade")
+            st.plotly_chart(fig_normal)
+
+
